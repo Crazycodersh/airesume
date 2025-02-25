@@ -1,6 +1,6 @@
 import streamlit as st
 import time
-from utils.pdf_processor import PDFProcessor
+from utils.document_processor import DocumentProcessor
 from utils.nlp_analyzer import NLPAnalyzer
 from utils.resume_ranker import ResumeRanker
 import base64
@@ -14,7 +14,7 @@ def main():
     st.markdown("Upload resumes and job description to get AI-powered analysis and ranking")
 
     # Initialize components
-    pdf_processor = PDFProcessor()
+    doc_processor = DocumentProcessor()
     nlp_analyzer = NLPAnalyzer()
     resume_ranker = ResumeRanker()
 
@@ -38,13 +38,13 @@ def main():
         - Excellent communication and team collaboration skills
         """
         st.session_state['job_description'] = job_description
-        st.rerun()  # Changed from experimental_rerun() to rerun()
+        st.rerun()
 
     # Resume Upload Section
     st.header("Resume Upload")
     uploaded_files = st.file_uploader(
-        "Upload resumes (PDF format)",
-        type=['pdf'],
+        "Upload resumes (PDF, DOC, or DOCX format)",
+        type=['pdf', 'doc', 'docx'],
         accept_multiple_files=True
     )
 
@@ -53,11 +53,11 @@ def main():
             try:
                 results = []
                 for file in uploaded_files:
-                    # Extract text from PDF
-                    resume_text = pdf_processor.extract_text(file)
+                    # Extract text from document
+                    resume_text = doc_processor.extract_text(file)
 
                     # Get document statistics
-                    doc_stats = pdf_processor.get_document_stats(resume_text)
+                    doc_stats = doc_processor.get_document_stats(resume_text)
 
                     # Extract entities
                     entities = nlp_analyzer.extract_entities(resume_text)
