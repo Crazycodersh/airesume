@@ -10,8 +10,28 @@ with open('styles/main.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 def main():
-    st.title("AI Resume Screening System")
-    st.markdown("Upload resumes and job description to get AI-powered analysis and ranking")
+    # Main title with custom styling
+    st.markdown('<h1 class="main-title">AI Resume Screening System</h1>', unsafe_allow_html=True)
+
+    # Instructions section
+    with st.container():
+        st.markdown('<div class="instructions-card">', unsafe_allow_html=True)
+        st.markdown("### How to Use This Tool")
+        st.markdown("""
+        <div class="fade-in">
+        <p><span class="step-number">1</span> Enter the job description or use the sample job description button.</p>
+        <p><span class="step-number">2</span> Upload one or more resumes (Supported formats: PDF, DOC, DOCX).</p>
+        <p><span class="step-number">3</span> Click the "Process Resumes" button to start the analysis.</p>
+        <p><span class="step-number">4</span> Review the detailed analysis results including:</p>
+        <ul>
+            <li>Overall match score</li>
+            <li>Skills analysis</li>
+            <li>Education and experience evaluation</li>
+            <li>Document statistics</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # Initialize components
     doc_processor = DocumentProcessor()
@@ -19,6 +39,7 @@ def main():
     ml_scorer = MLScorer()
 
     # Job Description Input
+    st.markdown('<div class="upload-section">', unsafe_allow_html=True)
     st.header("Job Description")
     job_description = st.text_area(
         "Enter the job description",
@@ -40,14 +61,17 @@ def main():
         """
         st.session_state['job_description'] = job_description
         st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Resume Upload Section
+    st.markdown('<div class="upload-section">', unsafe_allow_html=True)
     st.header("Resume Upload")
     uploaded_files = st.file_uploader(
         "Upload resumes (PDF, DOC, or DOCX format)",
         type=['pdf', 'doc', 'docx'],
         accept_multiple_files=True
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Store uploaded files in session state
     if uploaded_files:
@@ -89,6 +113,7 @@ def main():
                 results.sort(key=lambda x: x['scores']['overall_score'], reverse=True)
 
                 # Display Results
+                st.markdown('<div class="results-section fade-in">', unsafe_allow_html=True)
                 st.header("Analysis Results")
 
                 for idx, result in enumerate(results, 1):
@@ -110,30 +135,69 @@ def main():
                         st.subheader("Skills Analysis")
                         col1, col2 = st.columns(2)
                         with col1:
-                            st.write("Matched Skills")
-                            st.write(", ".join(result['scores']['matched_skills']) if result['scores']['matched_skills'] else "None found")
+                            st.markdown("##### Matched Skills")
+                            matched_skills = result['scores']['matched_skills']
+                            if matched_skills:
+                                st.markdown('<div class="skills-container">' + 
+                                    ''.join([f'<span class="skills-tag matched-skill">{skill}</span>' for skill in matched_skills]) +
+                                    '</div>', unsafe_allow_html=True)
+                            else:
+                                st.write("None found")
+
                         with col2:
-                            st.write("Missing Skills")
-                            st.write(", ".join(result['scores']['missing_skills']) if result['scores']['missing_skills'] else "None found")
+                            st.markdown("##### Missing Skills")
+                            missing_skills = result['scores']['missing_skills']
+                            if missing_skills:
+                                st.markdown('<div class="skills-container">' + 
+                                    ''.join([f'<span class="skills-tag missing-skill">{skill}</span>' for skill in missing_skills]) +
+                                    '</div>', unsafe_allow_html=True)
+                            else:
+                                st.write("None found")
 
                         # Document Statistics
                         st.subheader("Document Statistics")
-                        st.write(f"Word Count: {result['stats']['word_count']}")
-                        st.write(f"Sentence Count: {result['stats']['sentence_count']}")
-                        st.write(f"Average Word Length: {result['stats']['avg_word_length']:.2f}")
+                        col1, col2, col3 = st.columns(3)
+                        with col1:
+                            st.metric("Word Count", result['stats']['word_count'])
+                        with col2:
+                            st.metric("Sentence Count", result['stats']['sentence_count'])
+                        with col3:
+                            st.metric("Avg Word Length", f"{result['stats']['avg_word_length']:.1f}")
 
                         # Named Entities
                         st.subheader("Named Entities")
                         col1, col2, col3 = st.columns(3)
                         with col1:
-                            st.write("Organizations")
-                            st.write(", ".join(result['entities']['ORGANIZATION']) if result['entities']['ORGANIZATION'] else "None found")
+                            st.markdown("##### Organizations")
+                            orgs = result['entities']['ORGANIZATION']
+                            if orgs:
+                                st.markdown('<div class="skills-container">' + 
+                                    ''.join([f'<span class="skills-tag">{org}</span>' for org in orgs]) +
+                                    '</div>', unsafe_allow_html=True)
+                            else:
+                                st.write("None found")
+
                         with col2:
-                            st.write("People")
-                            st.write(", ".join(result['entities']['PERSON']) if result['entities']['PERSON'] else "None found")
+                            st.markdown("##### People")
+                            people = result['entities']['PERSON']
+                            if people:
+                                st.markdown('<div class="skills-container">' + 
+                                    ''.join([f'<span class="skills-tag">{person}</span>' for person in people]) +
+                                    '</div>', unsafe_allow_html=True)
+                            else:
+                                st.write("None found")
+
                         with col3:
-                            st.write("Locations")
-                            st.write(", ".join(result['entities']['GPE']) if result['entities']['GPE'] else "None found")
+                            st.markdown("##### Locations")
+                            locations = result['entities']['GPE']
+                            if locations:
+                                st.markdown('<div class="skills-container">' + 
+                                    ''.join([f'<span class="skills-tag">{loc}</span>' for loc in locations]) +
+                                    '</div>', unsafe_allow_html=True)
+                            else:
+                                st.write("None found")
+
+                st.markdown('</div>', unsafe_allow_html=True)
 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
