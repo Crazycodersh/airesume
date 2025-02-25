@@ -2,7 +2,7 @@ import streamlit as st
 import time
 from utils.document_processor import DocumentProcessor
 from utils.nlp_analyzer import NLPAnalyzer
-from utils.resume_ranker import ResumeRanker
+from utils.ml_scorer import MLScorer
 import base64
 
 # Load custom CSS
@@ -16,7 +16,7 @@ def main():
     # Initialize components
     doc_processor = DocumentProcessor()
     nlp_analyzer = NLPAnalyzer()
-    resume_ranker = ResumeRanker()
+    ml_scorer = MLScorer()
 
     # Job Description Input
     st.header("Job Description")
@@ -36,6 +36,7 @@ def main():
         - Experience with cloud platforms (AWS, GCP)
         - Background in machine learning and data analysis
         - Excellent communication and team collaboration skills
+        Bachelor's degree in Computer Science or related field required
         """
         st.session_state['job_description'] = job_description
         st.rerun()
@@ -62,8 +63,8 @@ def main():
                     # Extract entities
                     entities = nlp_analyzer.extract_entities(resume_text)
 
-                    # Calculate scores
-                    scores = resume_ranker.calculate_score_breakdown(job_description, resume_text)
+                    # Calculate advanced scores
+                    scores = ml_scorer.calculate_advanced_scores(job_description, resume_text)
 
                     results.append({
                         'filename': file.name,
@@ -83,14 +84,26 @@ def main():
                     with st.expander(f"#{idx} - {result['filename']} (Score: {result['scores']['overall_score']}%)"):
                         # Score Breakdown
                         st.subheader("Score Breakdown")
-                        col1, col2, col3 = st.columns(3)
+                        col1, col2, col3, col4 = st.columns(4)
 
                         with col1:
                             st.metric("Content Match", f"{result['scores']['content_similarity']}%")
                         with col2:
-                            st.metric("Keyword Match", f"{result['scores']['keyword_match']}%")
+                            st.metric("Skills Match", f"{result['scores']['skills_match']}%")
                         with col3:
-                            st.metric("Length Score", f"{result['scores']['length_score']}%")
+                            st.metric("Education", f"{result['scores']['education_level']}%")
+                        with col4:
+                            st.metric("Experience", f"{result['scores']['experience_level']}%")
+
+                        # Skills Analysis
+                        st.subheader("Skills Analysis")
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.write("Matched Skills")
+                            st.write(", ".join(result['scores']['matched_skills']) if result['scores']['matched_skills'] else "None found")
+                        with col2:
+                            st.write("Missing Skills")
+                            st.write(", ".join(result['scores']['missing_skills']) if result['scores']['missing_skills'] else "None found")
 
                         # Document Statistics
                         st.subheader("Document Statistics")
