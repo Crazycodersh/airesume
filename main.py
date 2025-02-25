@@ -38,7 +38,7 @@ def main():
         - Excellent communication and team collaboration skills
         """
         st.session_state['job_description'] = job_description
-        st.experimental_rerun()
+        st.rerun()  # Changed from experimental_rerun() to rerun()
 
     # Resume Upload Section
     st.header("Resume Upload")
@@ -55,16 +55,16 @@ def main():
                 for file in uploaded_files:
                     # Extract text from PDF
                     resume_text = pdf_processor.extract_text(file)
-                    
+
                     # Get document statistics
                     doc_stats = pdf_processor.get_document_stats(resume_text)
-                    
+
                     # Extract entities
                     entities = nlp_analyzer.extract_entities(resume_text)
-                    
+
                     # Calculate scores
                     scores = resume_ranker.calculate_score_breakdown(job_description, resume_text)
-                    
+
                     results.append({
                         'filename': file.name,
                         'text': resume_text,
@@ -78,13 +78,13 @@ def main():
 
                 # Display Results
                 st.header("Analysis Results")
-                
+
                 for idx, result in enumerate(results, 1):
                     with st.expander(f"#{idx} - {result['filename']} (Score: {result['scores']['overall_score']}%)"):
                         # Score Breakdown
                         st.subheader("Score Breakdown")
                         col1, col2, col3 = st.columns(3)
-                        
+
                         with col1:
                             st.metric("Content Match", f"{result['scores']['content_similarity']}%")
                         with col2:
@@ -103,13 +103,13 @@ def main():
                         col1, col2, col3 = st.columns(3)
                         with col1:
                             st.write("Organizations")
-                            st.write(", ".join(result['entities']['ORGANIZATION']))
+                            st.write(", ".join(result['entities']['ORGANIZATION']) if result['entities']['ORGANIZATION'] else "None found")
                         with col2:
                             st.write("People")
-                            st.write(", ".join(result['entities']['PERSON']))
+                            st.write(", ".join(result['entities']['PERSON']) if result['entities']['PERSON'] else "None found")
                         with col3:
                             st.write("Locations")
-                            st.write(", ".join(result['entities']['GPE']))
+                            st.write(", ".join(result['entities']['GPE']) if result['entities']['GPE'] else "None found")
 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
