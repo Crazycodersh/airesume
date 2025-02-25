@@ -2,9 +2,9 @@
 .main-title {
     color: #1f2937;
     text-align: center;
-    padding: 2rem 0;
-    border-bottom: 2px solid #e5e7eb;
+    padding: 1.5rem 0;
     margin-bottom: 2rem;
+    font-size: 2.5rem;
 }
 
 .instructions-card {
@@ -28,24 +28,49 @@
 }
 
 .upload-section {
+    background-color: #ffffff;
     padding: 2rem;
-    border-radius: 0.5rem;
-    border: 2px dashed #4CAF50;
+    border-radius: 0.75rem;
+    border: 2px solid #e5e7eb;
     margin-bottom: 2rem;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .upload-section:hover {
-    border-color: #45a049;
-    background-color: #f0f9f0;
+    border-color: #4CAF50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .results-section {
-    padding: 1.5rem;
-    border-radius: 0.5rem;
     background-color: #ffffff;
-    margin-bottom: 1.5rem;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.instructions-section {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    margin-top: 3rem;
+    border-left: 4px solid #4CAF50;
+}
+
+.instructions-section h2 {
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+}
+
+.instructions-section ul {
+    list-style-type: none;
+    padding-left: 1rem;
+}
+
+.instructions-section li {
+    margin-bottom: 0.5rem;
+    position: relative;
 }
 
 .score-card {
@@ -82,6 +107,82 @@
     border-left: 4px solid #dc3545;
 }
 
+.skills-tag {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 1rem;
+    margin: 0.25rem;
+    font-size: 0.875rem;
+    background-color: #e5e7eb;
+    color: #4b5563;
+}
+
+.matched-skill {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.missing-skill {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.entity-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border-radius: 1rem;
+    margin: 0.25rem;
+    font-size: 0.875rem;
+}
+
+/* Streamlit button override */
+.stButton > button {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+    background-color: #45a049;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+/* Progress bar styling */
+.stProgress > div > div > div {
+    background-color: #4CAF50;
+}
+
+/* Expander styling */
+.streamlit-expanderHeader {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.streamlit-expanderContent {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
 .progress-bar-wrapper {
     width: 100%;
     height: 8px;
@@ -96,34 +197,4 @@
     background-color: #4CAF50;
     border-radius: 4px;
     transition: width 0.3s ease;
-}
-
-.skills-tag {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    background-color: #e5e7eb;
-    color: #4b5563;
-    border-radius: 1rem;
-    margin: 0.25rem;
-    font-size: 0.875rem;
-}
-
-.matched-skill {
-    background-color: #d1fae5;
-    color: #065f46;
-}
-
-.missing-skill {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-    animation: fadeIn 0.5s ease-out;
 }

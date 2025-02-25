@@ -13,42 +13,12 @@ def main():
     # Main title with custom styling
     st.markdown('<h1 class="main-title">AI Resume Screening System</h1>', unsafe_allow_html=True)
 
-    # Instructions section
-    with st.container():
-        st.markdown('<div class="instructions-card">', unsafe_allow_html=True)
-        st.markdown("### How to Use This Tool")
-        st.markdown("""
-        <div class="fade-in">
-        <p><span class="step-number">1</span> Enter the job description or use the sample job description button.</p>
-        <p><span class="step-number">2</span> Upload one or more resumes (Supported formats: PDF, DOC, DOCX).</p>
-        <p><span class="step-number">3</span> Click the "Process Resumes" button to start the analysis.</p>
-        <p><span class="step-number">4</span> Review the detailed analysis results including:</p>
-        <ul>
-            <li>Overall match score</li>
-            <li>Skills analysis</li>
-            <li>Education and experience evaluation</li>
-            <li>Document statistics</li>
-        </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # Initialize components
-    doc_processor = DocumentProcessor()
-    nlp_analyzer = NLPAnalyzer()
-    ml_scorer = MLScorer()
-
     # Job Description Input
     st.markdown('<div class="upload-section">', unsafe_allow_html=True)
     st.header("Job Description")
-    job_description = st.text_area(
-        "Enter the job description",
-        height=200,
-        placeholder="Paste the job description here..."
-    )
 
-    # Sample job description loader
-    if st.button("Load Sample Job Description"):
+    # Sample job description button - more prominent placement
+    if st.button("📝 Load Sample Job Description", help="Click to load a sample job description"):
         job_description = """
         Senior Software Engineer
         Requirements:
@@ -61,7 +31,19 @@ def main():
         """
         st.session_state['job_description'] = job_description
         st.rerun()
+
+    job_description = st.text_area(
+        "Enter the job description",
+        height=200,
+        value=st.session_state.get('job_description', ''),
+        placeholder="Paste the job description here..."
+    )
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # Initialize components
+    doc_processor = DocumentProcessor()
+    nlp_analyzer = NLPAnalyzer()
+    ml_scorer = MLScorer()
 
     # Resume Upload Section
     st.markdown('<div class="upload-section">', unsafe_allow_html=True)
@@ -113,7 +95,7 @@ def main():
                 results.sort(key=lambda x: x['scores']['overall_score'], reverse=True)
 
                 # Display Results
-                st.markdown('<div class="results-section fade-in">', unsafe_allow_html=True)
+                st.markdown('<div class="results-section">', unsafe_allow_html=True)
                 st.header("Analysis Results")
 
                 for idx, result in enumerate(results, 1):
@@ -171,9 +153,8 @@ def main():
                             st.markdown("##### Organizations")
                             orgs = result['entities']['ORGANIZATION']
                             if orgs:
-                                st.markdown('<div class="skills-container">' + 
-                                    ''.join([f'<span class="skills-tag">{org}</span>' for org in orgs]) +
-                                    '</div>', unsafe_allow_html=True)
+                                for org in orgs:
+                                    st.markdown(f'<span class="entity-tag">{org}</span>', unsafe_allow_html=True)
                             else:
                                 st.write("None found")
 
@@ -181,9 +162,8 @@ def main():
                             st.markdown("##### People")
                             people = result['entities']['PERSON']
                             if people:
-                                st.markdown('<div class="skills-container">' + 
-                                    ''.join([f'<span class="skills-tag">{person}</span>' for person in people]) +
-                                    '</div>', unsafe_allow_html=True)
+                                for person in people:
+                                    st.markdown(f'<span class="entity-tag">{person}</span>', unsafe_allow_html=True)
                             else:
                                 st.write("None found")
 
@@ -191,9 +171,8 @@ def main():
                             st.markdown("##### Locations")
                             locations = result['entities']['GPE']
                             if locations:
-                                st.markdown('<div class="skills-container">' + 
-                                    ''.join([f'<span class="skills-tag">{loc}</span>' for loc in locations]) +
-                                    '</div>', unsafe_allow_html=True)
+                                for loc in locations:
+                                    st.markdown(f'<span class="entity-tag">{loc}</span>', unsafe_allow_html=True)
                             else:
                                 st.write("None found")
 
@@ -201,6 +180,35 @@ def main():
 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
+
+    # Instructions section at the bottom
+    st.markdown('<div class="instructions-section">', unsafe_allow_html=True)
+    st.markdown("## How to Use This Tool")
+    st.markdown("""
+    Follow these simple steps to analyze resumes:
+
+    1. **Job Description**
+       - Click '📝 Load Sample Job Description' for a quick start, or
+       - Enter your own job description in the text area
+
+    2. **Upload Resumes**
+       - Click 'Browse files' to upload resumes
+       - Supported formats: PDF, DOC, DOCX
+       - You can upload multiple resumes at once
+
+    3. **Process and Analyze**
+       - Click 'Process Resumes' to start the analysis
+       - Wait for the progress bar to complete
+       - Review the detailed results for each resume
+
+    4. **Review Results**
+       - Overall match score
+       - Skills analysis (matched and missing skills)
+       - Education and experience evaluation
+       - Document statistics
+       - Named entities (organizations, people, locations)
+    """)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
