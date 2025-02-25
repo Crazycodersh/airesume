@@ -49,11 +49,18 @@ def main():
         accept_multiple_files=True
     )
 
-    if uploaded_files and job_description:
+    # Store uploaded files in session state
+    if uploaded_files:
+        st.session_state['uploaded_files'] = uploaded_files
+
+    # Process button
+    if uploaded_files and job_description and st.button("Process Resumes"):
         with st.spinner('Processing resumes...'):
             try:
                 results = []
-                for file in uploaded_files:
+                progress_bar = st.progress(0)
+
+                for idx, file in enumerate(uploaded_files):
                     # Extract text from document
                     resume_text = doc_processor.extract_text(file)
 
@@ -73,6 +80,10 @@ def main():
                         'entities': entities,
                         'scores': scores
                     })
+
+                    # Update progress
+                    progress = int((idx + 1) / len(uploaded_files) * 100)
+                    progress_bar.progress(progress)
 
                 # Sort results by overall score
                 results.sort(key=lambda x: x['scores']['overall_score'], reverse=True)
